@@ -1,0 +1,15 @@
+// Amazonの注文履歴をTSV形式で出力するスクリプト
+//
+// 2015-01-01 時点での DOM 構造に対応, GoogleCrome, Opera でテスト済。
+// formatEntry関数を書き換えれば自由な書式で出力できます。
+//
+// 参考:
+//  - Amazonの注文履歴をCSV形式にして出力するスクリプト
+//    https://gist.github.com/arcatdmz/8500521
+//  - Amazon で使った金額の合計を出す奴 (2014 年バージョン)
+//    https://gist.github.com/polamjag/866a8af775c44b3c1a6d
+
+このザマ改造sクリプトでランキングを保存するやつです
+チームと個人イベのURLはまいかいかわるので注意
+
+javascript:(function(){var d=document;var s=d.createElement('script');s.src='(すくりぷとの場所).js';d.body.appendChild(s)})();
