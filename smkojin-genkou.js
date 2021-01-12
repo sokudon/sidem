@@ -111,23 +111,16 @@
             }
             
             
-			var dt = new Date();
-
-//年・月・日・曜日を取得する
-var year = dt.getFullYear();
-var month = dt.getMonth()+1;
-var week = dt.getDay();
-var day = dt.getDate();
-var hour = dt.getHours();
-var minute =("0"+ dt.getMinutes()).slice(-2);;
-
-var yobi= new Array("日","月","火","水","木","金","土");
-
-
-dd+=year+"/"+month+"/"+day+"("+yobi[week]+")"+hour+":"+ minute +ptn;
+var dt = new Date();
+	
+dd+=dtstring(dt) +ptn;
 
 dd=dd.replace(/^\t/gm,"");
 dd=dd.replace(/\t+$/gm,"");
+dd=dd.replace(/\r\n\r\n/gm,"\r\n");
+dd=dd.replace(/\r\n\r\n/gm,"\r\n");
+dd=dd.replace(/\r\n\r\n/gm,"\r\n");
+dd=dd.replace(/\r\n\r\n/gm,"\r\n");
 dd=dd.replace(/\r\n\r\n/gm,"\r\n");
 
             	       var
@@ -160,6 +153,7 @@ dd="";
 
                 var items = [];
                 var pubarr = box.find("div.a-row > span.a-size-small");
+                /*
                 box.find("div.a-row > a.a-link-normal").each(function(j) {
                     var item = {};
                     item.name = $(this).text().trim();
@@ -169,6 +163,7 @@ dd="";
                     item.author = $(pubarr[j*2]).text().trim().replace(/(\n)/g, '');
                     items.push(item);
                 });
+                */
 
 
 				var tmp =$(this).text();
@@ -185,23 +180,22 @@ dd="";
 				
 				
 				tmp=tmp.replace(/^\t[4-9]位.+/gm,"");
-				if(dlen==1){
+				if(tmp.match(/^\t11位.+/)){
 				tmp=tmp.replace(/^\t(1[2-9]|20)位.+/gm,"");
 				}
 				else{
 				tmp=tmp.replace(/^\t[0-9]+[1-9]位.+/gm,"");
 				}
 				
-				db=db.match(/http%3A%2F%2Fm.i-sidem.idolmaster.jp%2Fuser%2Fdetails%2F[0-9]+/);
-				if(db==null){
-				db="";
-				}
-				else if(db!=undefined || db!=null){
-				//alert(db);
-				db="ID:"+db[0].replace("http%3A%2F%2Fm.i-sidem.idolmaster.jp%2Fuser%2Fdetails%2F","");
-				}
+				//db=db.match(/http%3A%2F%2Fm.i-sidem.idolmaster.jp%2Fuser%2Fdetails%2F[0-9]+/);
+				//if(db==null){
+				//db="";
+				//}
+				//else if(db!=undefined || db!=null){
+					//alert(db);
+				//db="ID:"+db[0].replace("http%3A%2F%2Fm.i-sidem.idolmaster.jp%2Fuser%2Fdetails%2F","");
+				//}
 				
-				if(tmp)
 				dd+=tmp+"\t"+"\r\n";//d+da+dateText;
 				
                 var priceText = jQuery(box.find('div.order-info span.value')[1]).text();
