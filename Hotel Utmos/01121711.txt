@@ -1,13 +1,9 @@
-1位	  5,933,600,320pt
-2位	  5,506,103,630pt
-3位	  4,536,202,220pt
-10位	  2,371,000,250pt
-20位	  730,750,860pt
-100位	  316,708,250pt
-500位	  87,937,110pt
-1000位	  50,663,560pt
-2000位	  25,482,990pt
-3000位	  16,690,320pt
-5000位	  8,317,270pt
-10000位	  978,300pt
-2021/1/12(火)17:11	Hotel Utmostﾎﾟｲﾝﾄ :  
+{"1位":  5933600320,"2位":  5506103630,"3位":  4536202220,"10位":  2371000250,"20位":  730750860,"100位":  316708250,"500位":  87937110,"1000位":  50663560,"2000位":  25482990,"3000位":  16690320,"5000位":  8317270,"10000位":  978300,
+"time":2021/1/12 17:11"}
+
+
+https://script.google.com/macros/s/AKfycbytNWTMxHjwVvpC_DQFXEM_xJKjYlkDgiC0C-_biVXRBpusTyIAeUYt/exec
+
+
+
+https://script.google.com/macros/s/AKfycbwhVSUvWMfQDbjXfaQntdJuzQuFYqlNo0AeDFjonkXYiiljSwKtfQShNw/exec
