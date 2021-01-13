@@ -74,7 +74,7 @@
         }
         // 第二引数を true にすると各商品とかエラーを逐一表示する
         var progress = load(num, false);
-        $('#___overlay').text(year+'年の集計中…  / '+(num+1)+'ページ目');
+        $('#___overlay').text('サイドＭぼだの集計中…  / '+rank[num]+'ページ目');
         progress.done(function(results){
             if (typeof total[year] ===  'undefined') {
                 total[year] = results;
@@ -131,9 +131,46 @@ dd=dd.replace(/\r\n\r\n/gm,"\r\n");
                 //だうんろーどしょり   
                 //location.href="data:attachment/csv,charset=utf-8,download='somedata.csv'"+encodeURIComponent(finishdata)
                 TextDL(dd, dtstring(dt).replace(/[/ :\-]/g, ""));
-dd="";
+                
+                
+alert("データ確認:\r\n"+dd);
+	
+var js=JSON.stringify(mkjs(dd));
+var BD= {};
+BD.BD_JSON=js;
+alert("JSON確認:\r\n"+js);
+var google="https://script.google.com/macros/s/AKfycbytNWTMxHjwVvpC_DQFXEM_xJKjYlkDgiC0C-_biVXRBpusTyIAeUYt/exec";//googleフォームのid
+
+//ブックマーレットでぐぐるに送るためにはCORSの回避のため CORSUnblockの拡張かクロームの起動オプションで（）
+//あとログイン情報ないので　フォームのデプロイの下の権限をだれでも似する必要がある(個人自分だけにするにはログイン情報もつけないとX)
+
+//request = $.ajax({url: google,type: "post",	data: BD});
+	
+	
+	
         return false;
         }
+    }
+    
+      function mkjs(s) {
+    var JS={};
+    var lf=s.split("\n");
+    	
+    for(var i=0;i<lf.length;i++){
+    var st =lf[i];
+    if(st.match(/[0-9]+位/)!=null){
+    var r=st.match(/[0-9]+位/);
+    var m=st.replace(/,/gm,"").match(/[0-9]+pt/);
+    JS[r[0]]=m[0].replace("pt","");
+     }
+     if(st.match(/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2}/)!=null){
+     var m=st.match(/([0-9]{4}\/)?[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2}/);
+    JS.time=m[0];
+     }
+     
+     }
+    
+    return JS;
     }
     
     function load(num, verbose) {
@@ -192,7 +229,7 @@ dd="";
 				//db="";
 				//}
 				//else if(db!=undefined || db!=null){
-					//alert(db);
+				//alert(db);
 				//db="ID:"+db[0].replace("http%3A%2F%2Fm.i-sidem.idolmaster.jp%2Fuser%2Fdetails%2F","");
 				//}
 				
@@ -247,7 +284,7 @@ if (dd < 10) { dd = '0' + dd;}
 if (HH < 10) { HH = '0' + HH;}
 if (MM < 10) { MM = '0' + MM;}
 
-	return  (mm + "/" + dd + " " + HH + ":" + MM);
+	return  (yyyy+"/"+mm + "/" + dd + " " + HH + ":" + MM);
 	}
     
     //

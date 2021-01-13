@@ -1,0 +1,25 @@
+﻿//キーボードマクロのファイル
+S_BookmarkPattern(',', 30);	// 該当行マーク
+S_ReplaceAll(',', '', 30);	// すべて置換
+S_ReDraw(0);	// 再描画
+S_BookmarkPattern('(\\d+位)\\t', 30);	// 該当行マーク
+S_BookmarkPattern('(\\d+位)\\t', 30);	// 該当行マーク
+S_ReplaceAll('(\\d+位)\\t', '"$1":', 30);	// すべて置換
+S_ReDraw(0);	// 再描画
+S_BookmarkPattern('(\\d+/\\d+ \\d+:\\d+)\\t.+', 30);	// 該当行マーク
+S_BookmarkPattern('((\\d+/)?\\d+/\\d+ \\d+:\\d+)\\t.+', 30);	// 該当行マーク
+S_BookmarkPattern('((\\d+/)?\\d+/\\d+ \\d+:\\d+)\\t.+', 30);	// 該当行マーク
+S_BookmarkPattern('((\\d+/)?\\d+/\\d+ \\d+:\\d+)\\t.+', 30);	// 該当行マーク
+S_BookmarkPattern('((\\d+/)?\\d+/\\d+ \\d+:\\d+)\\t.+', 30);	// 該当行マーク
+S_BookmarkPattern('((\\d+/)?\\d+/\\d+ \\d+:\\d+)\\t.+', 30);	// 該当行マーク
+S_BookmarkPattern('((\\d+/)?\\d+/\\d+ \\d+:\\d+)\\t.+', 30);	// 該当行マーク
+S_BookmarkPattern('((\\d+/)?\\d+/\\d+ \\d+:\\d+)\\t.+', 30);	// 該当行マーク
+S_ReplaceAll('((\\d+/)?\\d+/\\d+ \\d+:\\d+)\\t.+', '"time":"$1"}', 30);	// すべて置換
+S_ReDraw(0);	// 再描画
+S_Copy(0);	// コピー
+S_BookmarkPattern('"1位"', 30);	// 該当行マーク
+S_ReplaceAll('"1位"', '{"1位"', 30);	// すべて置換
+S_ReDraw(0);	// 再描画
+S_BookmarkPattern('pt\\r\\n', 30);	// 該当行マーク
+S_ReplaceAll('pt\\r\\n', ',', 30);	// すべて置換
+S_ReDraw(0);	// 再描画
