@@ -1,0 +1,534 @@
+<html>
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name=viewport content="width=device-width, initial-scale=1">
+<meta name="keywords" content="CGSS　ぼーだー　ボーダー　border">
+<title>サイドＭボーダー/sideMBORDER(GOOGLECHART)</title>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-124912501-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-124912501-1');
+</script>
+    <!--"https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1','packages':['annotationchart']}]}" -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script src="./LIB/moment-with-locales.js"></script>
+	<script type="text/javascript" src="https://script.google.com/macros/s/AKfycbwhVSUvWMfQDbjXfaQntdJuzQuFYqlNo0AeDFjonkXYiiljSwKtfQShNw/exec"></script>
+    <script type='text/javascript'>
+<!--
+//https://developers.google.com/chart/interactive/docs/reference
+//pattern [Optional] String pattern that was used by a data source to format numeric, date, or time column values. This is for reference only; you probably won't need to read the pattern, and it isn't required to exist. The Google Visualization client does not use this value (it reads the cell's formatted value). If the DataTable has come from a data source in response to a query with a format clause, the pattern you specified in that clause will probably be returned in this value. The recommended pattern standards are the ICU DecimalFormat and SimpleDateFormat .
+//https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/text/SimpleDateFormat.html
+//https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/text/DecimalFormat.html
+
+var ibestart=start;
+var ibeend=end;
+
+var dateformat="yyyy/MM/dd HH:mm";
+if((moment(ibestart).isDST())^(moment(ibeend).isDST())){//片方だけサマータイムのとき時差つきデフォルト
+//document.getElementById("TZ").checked=true;
+dateformat="yyyy/MM/dd HH:mmZ";
+}
+
+var gcharttz = null;//ぐぐるチャートのタイムゾーン,nullでOS自動現地変換,0utc 9jst -4EDT -5EST
+
+
+google.charts.load("current",{packages:["annotationchart"]}),google.charts.setOnLoadCallback(drawChart);
+var column_data=[["date","日付"]],jisoku=[];
+function convert_google(e){for(var n=1;
+n<e[0].length;
+n++)column_data[n]=[],column_data[n][0]="number",column_data[n][1]=e[0][n];
+column_data.length=e[0].length;
+for(var t=[],o=0;
+o<e.length-1;
+o++){t[o]=[],t[o][0]=new Date(moment(e[o+1][0]).valueOf());
+for(n=1;
+n<e[0].length;
+n++)""==e[o+1][n]?t[o][n]=void 0:t[o][n]=e[o+1][n]}return t}function drawChart(){var l=new google.visualization.DataTable;
+
+document.getElementById("title").innerHTML="<h3>"+ibe+"ボーダー</h3>";
+var e=convert_google(BD);
+e.sort(function(e,n){return e[0]<n[0]?1:e[0]>n[0]?-1:0});
+
+var n=document.getElementById("SP").checked,t=document.TZ.HM.options[document.TZ.HM.selectedIndex].text;
+gcharttz=gchartTZ();
+
+var TZ=document.getElementById("TZ").checked;
+if(TZ){
+dateformat="yyyy/MM/dd HH:mmZ";
+}
+else{
+dateformat="yyyy/MM/dd HH:mm";
+}
+
+t="^"+t+"$",jisoku=[];
+var time_diff=getSTD(e[0][0]);
+var type=[0,9,time_diff.std,time_diff.dst,gcharttz];
+standart_time_diff=type[document.TZPT.PT.selectedIndex];
+
+ 
+//(現地終了時間H':m')?00:00 内部参照UTC
+//(現地終了時間H':m')?09:00 内部参照JST
+//(現地終了時間H':m')?H':m' 内部参照現地時間　標準時差
+//(現地終了時間H!:m!)?H!:m! 内部参照現地時間DSTサマータイム
+//https://www.jtb.co.jp/kaigai_guide/report/AU/2015/10/summer-time.html
+
+for(var o=[],a="",i=0,r=0;i<e.length;i++){
+
+var dt=moment.utc(e[i][0]).add("Hours",standart_time_diff);
+var HHmm=dt.format("H:mm");
+
+/* //ro-karu時間で修正
+var dt=moment(e[i][0]);
+//dt=dt.add("Hours",-1);　/サン?マータイム/越境時注意喚起 -3600も同じ
+;//moment("2020/03/08 03:00)がmoment("2020/03/08 02:00)の幻2時でぱーすされてしまい
+;//unixタイムでは幻2時=/サン?マータイム/実施直前1時とおなじになる（）
+;//https://stackoverflow.com/questions/56263239/how-to-ignore-dst-when-parsing-string-to-time-time-parse-in-ruby
+if(dt.isDST()){
+HHmm  =parseInt(dt.format("H"))-1;
+if(HHmm<0){HHmm+=24;}
+HHmm +=dt.format(":mm");
+}
+*/
+
+if(HHmm.match(t)){
+o[r]=i;
+r++;
+}}
+
+document.getElementById("intl").innerHTML=Intl.DateTimeFormat().resolvedOptions().timeZone;
+document.getElementById("debug").innerHTML="確認用デバッグ時間"
++"<table border=1><thead><tr><th></th><th>UTC</th><th>JST</th><th>LOCAL</th><th>LOCAL DST</th><th>GCHART</th></tr></thead>"
++"<tbody><tr><td>表の一番上の時刻</td><td>"
++ moment.utc(e[o[0]][0]).add("Hours",type[0]).format("H:mm")
++"</td><td>"
++ moment.utc(e[o[0]][0]).add("Hours",type[1]).format("H:mm")
++"</td><td>"
++ moment.utc(e[o[0]][0]).add("Hours",type[2]).format("H:mm")
++"</td><td>"
++ moment.utc(e[o[0]][0]).add("Hours",type[3]).format("H:mm")
++"</td><td>"
++ moment.utc(e[o[0]][0]).add("Hours",type[4]).format("H:mm")
++"</td></tr>"
++"<tr><td>UTC時差</td><td>"
++ 0
++"</td><td>"
++ 9
++"</td><td>"
++ type[2]
++"</td><td>"
++ type[3]
++"</td><td>"
++ type[4]
++"</td></tr>"+"<tr><td>JST時差</td><td>"
++ -9
++"</td><td>"
++ 0
++"</td><td>"
++ (type[2]-9)
++"</td><td>"
++ (type[3]-9)
++"</td><td>"
++ (type[4]-9)
++"</td></tr></tbody></table>";
+
+
+var u=[1];
+for(i=0;
+i<maxlen;
+i++)document.chbox.elements[i].checked?u[i+1]=1:u[i+1]=0;
+if(n){l.addColumn(column_data[0][0],column_data[0][1]);
+for(i=1;
+i<column_data.length;
+i++)u[i]&&(l.addColumn(column_data[i][0],column_data[i][1]),l.addColumn(column_data[i][0],"速度"));
+var c=0;
+if(0<o.length){for(i=0;
+i<o.length-1;
+i++){var d=1;
+jisoku[i]=[],jisoku[i][0]=e[o[i]][0];
+for(r=1;
+r<column_data.length;
+r++)u[r]&&(jisoku[i][2*d-1]=e[o[i]][r],0==(c=e[o[i]][r]-e[o[i+1]][r])&&(c=void 0),jisoku[i][2*d]=c,d++)}d=1;
+jisoku[i]=[],jisoku[i][0]=e[o[i]][0];
+for(r=1;
+r<column_data.length;
+r++)u[r]&&(jisoku[i][2*d-1]=e[o[i]][r],jisoku[i][2*d]=void 0,d++)}}else{for(i=0;
+i<column_data.length;
+i++)u[i]&&l.addColumn(column_data[i][0],column_data[i][1]);
+if(0<o.length)for(i=0;
+i<o.length;
+i++){d=1;
+jisoku[i]=[],jisoku[i][0]=e[o[i]][0];
+for(r=1;
+r<column_data.length;
+r++)u[r]&&(0<e[o[i]][r]?jisoku[i][d]=e[o[i]][r]:jisoku[i][d]=void 0,d++)}}l.addRows(jisoku),new google.visualization.DateFormat({pattern:dateformat,'timeZone':gcharttz}).format(l,0);
+var m=new google.visualization.NumberFormat({pattern:"###,###"});
+
+
+if(n)for(i=1;
+i<2*(d-1)+1;
+i++)m.format(l,i);
+else for(i=1;
+i<d;
+i++)m.format(l,i);
+var s=new google.visualization.Table(document.getElementById("table_div"));
+s.draw(l,{sort:"disable",sortColumn:0,sortAscending:!1,page:"enable",pageSize:10,pagingSymbols:{prev:"前",next:"次"}});
+var g=new google.visualization.DataView(l),f=new google.visualization.AnnotationChart(document.getElementById("chart_div")),v={displayAnnotations:!0};
+f.draw(g,v),google.visualization.events.addListener(s,"select",function(){f.setSelection(s.getSelection())}),google.visualization.events.addListener(f,"select",function(){for(var e=f.getSelection(),n=0;
+n<e.length;
+n++)e[n].column=null;
+var t=f.getSelection()[0];
+if(null!=t){var o=t.row,a={sort:"disable",sortColumn:0,page:"enable",pageSize:10,pagingSymbols:{prev:"前",next:"次"},sortAscending:!0,startPage:parseInt(o/10)};
+s.draw(l,a)}s.setSelection(e)}),google.visualization.events.addListener(s,"sort",function(e){l.sort([{column:e.column,desc:!e.ascending}]),f.draw(l,v),table_option.sortAscending=e.ascending,table_option.sortColumn=e.column,s.draw(g,t_option),s.setSelection(null)})}var rank=[],maxlen=0;
+
+function CHmai(){rank=BD[0],maxlen=BD[0].length-1;
+for(var e=0;
+e<maxlen;
+e++)document.getElementById("L"+(e+1)).innerHTML=rank[e+1];
+return!1}
+
+window.onload=function(){
+CHmai();
+moment();
+if(ibe.indexOf("Parade")>0){
+CHitimai(1,score);
+}
+else{
+CHitimai(1,rankmai);
+}
+}
+
+//var rankmai=["100位","500位","1000位","2000位","3000位","5000位","10000位"],rend=["1位","2位","3位","9位","10位","11位"];
+var rankmai=["150位","500位","1000位","2000位","3000位","5000位","8000位"],rend=["1位","2位","3位","10位","11位","20位","21位"];
+var score = ["スコア1位","スコア10位","スコア11位","スコア5001位","スコア10001位","スコア40001位","スコア50001位"]
+function CHitimai(e,n){var t=n;
+if(null!=n){for(var o=0;
+o<maxlen;
+o++)document.chbox.elements[o].checked=!1;
+for(var a=0;
+a<t.length;
+a++)for(o=0;
+o<maxlen;
+o++)if(t[a]==document.getElementById("L"+(o+1)).innerHTML){document.chbox.elements[o].checked=!0;
+break}}
+else for(o=0;
+o<maxlen;
+o++)document.chbox.elements[o].checked=!0;
+return e&&drawChart(),!1}
+
+function getHEAD(){for(var e=[],n=document.getElementById("SP").checked,t=[1],o=0;
+o<maxlen;
+o++)document.chbox.elements[o].checked?t[o+1]=1:t[o+1]=0;
+if(n){e.push(column_data[0][1]);
+for(o=1;
+o<column_data.length;
+o++)t[o]&&(e.push(column_data[o][1]),e.push("速度"))}else for(o=0;
+o<column_data.length;
+o++)t[o]&&e.push(column_data[o][1]);
+return e}
+function DLCSV(){
+var TZ=document.getElementById("TZ").checked;
+var dtf="YYYY/MM/DD HH:mm";
+if(TZ){
+dtf="YYYY/MM/DD HH:mmZ";
+}
+for(var e="",n=getHEAD(),t=0;
+t<n.length;
+t++)e+=n[t]+",";
+e=e.slice(0,-1),e+="\r\n";
+for(var o=0;
+o<jisoku.length;
+o++){e+=moment(jisoku[o][0]).format(dtf)+",";
+for(t=1;t<jisoku[o].length;t++)e+=jisoku[o][t]+",";
+e=e.slice(0,-1),e+="\r\n"}TextDL(e,"border.csv")}function DLJSON(){var e=[];
+e[0]=[],e[0]=getHEAD(),TextDL(JSON.stringify(e.concat(jisoku)),"cgssbd.txt")}function TextDL(n,t){b=new Blob([n],{type:"text/plain"}),a=document.createElement("a"),a.download=t,a.href=window.URL.createObjectURL(b),e=document.createEvent("MouseEvent"),e.initEvent("click",!0,!0),a.dispatchEvent(e)}
+
+setInterval("get_count()",1000);
+function get_count() {
+
+var TZ=document.getElementById("TZ").checked;
+var dtf="YYYY/MM/DD HH:mm";
+if(TZ){
+dtf="YYYY/MM/DD HH:mmZ";
+}
+var t=moment(ibeend);
+var now=moment();
+var left_time=t-now;t= moment(left_time).valueOf()/1000;
+var timetxt= Math.floor(t/(3600*24)) +"日" +Math.floor( (t%(3600*24))/3600) + "時間"+Math.floor((t%3600)/60)+ "分" +Math.floor(t%60)+ "秒";
+var datend=moment(ibeend).format(dtf);
+var datest=moment(ibestart).format(dtf);
+
+
+var prog=(moment.utc()-moment.utc(ibestart))/(moment.utc(ibeend)-moment.utc(ibestart))*100;
+
+var dstst="";
+var dsten="";
+var ostime = document.getElementById("OF").checked;
+if(ostime){
+if(moment(ibestart).isDST()){dstst="(DST,夏時間)";}
+if(moment(ibeend).isDST()){dsten="(DST,夏時間)";}
+}
+else{
+var tz=document.tzone.owata.options[document.tzone.owata.selectedIndex].text;
+var tzm =tz.match(/\+?-?\d+:\d+/g);
+datend=moment.utc(ibeend).add("Hours",gcharttz).format(dtf).replace("+00:00",tzm[0]);
+datest=moment.utc(ibestart).add("Hours",gcharttz).format(dtf).replace("+00:00",tzm[0]);
+
+}
+
+var zan="開始:"+datest +dstst +"<br>"
++"終了:"+datend +dsten +"まで残り"+timetxt +"("+prog.toFixed(2)+"%)";
+if(left_time<0){
+zan ="終了:"+datend +dsten + "に終了しました～";
+}
+if(ibeend==""){
+zan ="イベント終了日が未確定です"
+}
+
+document.getElementById("myProgress").value =prog;
+document.getElementById("left").innerHTML= zan;
+}
+
+function getSTD(dt){//次年度分までのタイムゾーンQS
+var year=new Date(dt).getFullYear();
+var yearN=parseInt(year)+1;
+var yTZ=[];
+for(var i =0;i<12;i++){
+yTZ[i]=[];yTZ[i][1]=i+1;
+yTZ[i][0]= (new Date(year+"/"+ ("0"+(i+1)).slice(-2) +"/01 00:00").getTimezoneOffset())/-60;
+}
+for(var i =0;i<12;i++){
+yTZ[i+12]=[];yTZ[i+12][1]="N"+(i+1);
+yTZ[i+12][0] =(new Date(yearN+"/"+ ("0"+(i+1)).slice(-2) +"/01 00:00").getTimezoneOffset())/-60;
+}
+
+yTZ.sort(function(a, b) { return a[0] - b[0]; }); 
+
+var timezone={};
+timezone.std=yTZ[0][0];
+yTZ.sort(function(a, b) { return -a[0]+b[0]; }); 
+timezone.dst=yTZ[0][0];
+
+return timezone;
+}
+
+// Math.trunc() - JavaScript | MDN https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Math/trunc
+//Math.trunc = Math.trunc || function(x) {
+//  return x < 0 ? Math.ceil(x) : Math.floor(x);
+//}
+
+
+
+function gchartTZ(){
+   var jtc=9;
+   var jtc_sm=11;
+   var tz=document.tzone.owata.options[document.tzone.owata.selectedIndex].text;
+var tzm =tz.match(/-?\d+/g);
+var t_offset=0;
+var t_offset_min=0;
+var ostime = document.getElementById("OF").checked;
+if(ostime){
+	return null;//現地時間に変換
+}
+else if(tzm!=null){
+t_offset=parseInt(tzm[0]);
+if(tzm[1]!=null){
+t_offset_min=(parseInt(tzm[1]));
+if(t_offset<0){
+t_offset_min=-t_offset_min;
+}}
+
+} 
+   
+   jtc=t_offset + t_offset_min/60;
+
+	return jtc;
+}
+
+-->
+</script>
+<body>
+<div id='title'></div>
+    <div id='left'></div> 
+    <progress id="myProgress" value="0" max="100">0%</progress>
+    <!--<div id='chart_div' style='width: 1200px; height: 600px;'></div>
+    <div id='table_div' style='width: 1200px; height: 400px;'></div>-->
+    <div id='chart_div' style='height: 400px;'></div>
+    <div id='table_div'></div>
+    <input type="Submit" value="CSVDL" generate"="" onclick="DLCSV();return false">
+<input type="Submit" value="JSONDL" generate"="" onclick="DLJSON();return false">
+<form name="TZ">
+時間:
+<select name="HM" onchange="drawChart()">
+<option selected="selected" value="">(※制限なし)?[0-9]{1,2}:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,0時起点)?^0:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,15時起点)?15:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,17時起点)?17:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,21時起点)?21:[0-9]{1,2}</option>
+<option value="">-------------------------------</option>
+<option value="">(※日次ぐらい,0時起点)?^0?0:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,1時起点)?^0?1:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,2時起点)?^0?2:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,3時起点)?^0?3:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,4時起点)?^0?4:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,5時起点)?^0?5:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,6時起点)?^0?6:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,7時起点)?^0?7:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,8時起点)?^0?8:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,9時起点)?^0?9:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,10時起点)?10:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,11時起点)?11:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,12時起点)?12:[0-9]{1,2}</option>
+<option value="">-------------------------------</option>
+<option value="">(※日次ぐらい,13時起点)?13:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,14時起点)?14:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,15時起点)?15:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,14時起点)?14:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,15時起点)?15:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,16時起点)?16:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,17時起点)?17:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,18時起点)?18:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,19時起点)?19:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,20時起点)?20:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,21時起点)?21:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,22時起点)?22:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,23時起点)?23:[0-9]{1,2}</option>
+<option value="">(※日次ぐらい,0時起点)?^0:[0-9]{1,2}</option>
+</select>
+</form>
+
+<label for="SP"><input type="checkbox" value="SP" id="SP" onchange="drawChart()">速度表示</label>
+<label for="TZ"><input type="checkbox" id="TZ" onchange="drawChart()">時差付き情報</label>
+<form name="chbox" onchange="drawChart()">
+<b>表示対象</b><br>
+<label for="R1"><input type="checkbox" checked="checked" value="S1" id="R1"><div id="L1" style="display: inline-block; _display: inline;">1位</div></label>
+<label for="R2"><input type="checkbox" checked="checked" value="S2" id="R2"><div id="L2" style="display: inline-block; _display: inline;">501位</div></label>
+<label for="R3"><input type="checkbox" checked="checked" value="S3" id="R3"><div id="L3" style="display: inline-block; _display: inline;">2001位</div></label>
+<label for="R4"><input type="checkbox" checked="checked" value="S4" id="R4"><div id="L4" style="display: inline-block; _display: inline;">10001位</div></label><br>
+<label for="R5"><input type="checkbox" checked="checked" value="S5" id="R5"><div id="L5" style="display: inline-block; _display: inline;">20001位</div> </label>
+<label for="R6"><input type="checkbox" checked="checked" value="S6" id="R6"><div id="L6" style="display: inline-block; _display: inline;">60001位</div></label>
+<label for="R7"><input type="checkbox" checked="checked" value="S7" id="R7"><div id="L7" style="display: inline-block; _display: inline;">120001位</div></label>
+<label for="R8"><input type="checkbox" checked="checked" value="S8" id="R8"><div id="L8" style="display: inline-block; _display: inline;">200001位</div></label><br>
+<label for="R9"><input type="checkbox" checked="checked" value="S9" id="R9"><div id="L9" style="display: inline-block; _display: inline;">300001位</div></label>
+<label for="R10"><input type="checkbox" checked="checked" value="S10" id="R10"><div id="L10" style="display: inline-block; _display: inline;">スコア1位</div></label>
+<label for="R11"><input type="checkbox" checked="checked" value="S11" id="R11"><div id="L11" style="display: inline-block; _display: inline;">スコア5001位</div></label>
+<label for="R12"><input type="checkbox" checked="checked" value="S12" id="R12"><div id="L12" style="display: inline-block; _display: inline;">スコア10001位</div></label>
+<label for="R13"><input type="checkbox" checked="checked" value="S13" id="R13"><div id="L13" style="display: inline-block; _display: inline;">スコア40001位</div></label>
+<label for="R14"><input type="checkbox" checked="checked" value="S12" id="R12"><div id="L14" style="display: inline-block; _display: inline;">--</div></label>
+<label for="R15"><input type="checkbox" checked="checked" value="S13" id="R13"><div id="L15" style="display: inline-block; _display: inline;">--</div></label>
+</form>
+<input type="Submit" value="100位" generate"="" onclick="CHitimai(1,[&#39;100位&#39;]);return false">
+<input type="Submit" value="500位" generate"="" onclick="CHitimai(1,[&#39;500位&#39;]);return false">
+<input type="Submit" value="1000位" generate"="" onclick="CHitimai(1,[&#39;1000位&#39;]);return false">
+<input type="Submit" value="2000位" generate"="" onclick="CHitimai(1,[&#39;2000位&#39;]);return false">
+<input type="Submit" value="3000位" generate"="" onclick="CHitimai(1,[&#39;3000位&#39;]);return false">
+<input type="Submit" value="5000位" generate"="" onclick="CHitimai(1,[&#39;5000位&#39;]);return false">
+<input type="Submit" value="10000位" generate"="" onclick="CHitimai(1,[&#39;10000位&#39;]);return false">
+<input type="Submit" value="PTぼだ" generate"="" onclick="CHitimai(1,rankmai);return false">
+<input type="Submit" value="10傑" generate"="" onclick="CHitimai(1,rend);return false">
+<input type="Submit" value="ALL" generate"="" onclick="CHitimai(1,null);return false">
+<br><br>
+-----------わかる人向け時間操作向け設定ファイル（現地時間以外使う場合必要）<a href="https://photos.google.com/share/AF1QipNKXhMSq8_qJWW5phkH8Qit5yyCMOrm0RPG2F8G69g-d7L7Z5BQMjKYkmJwH_TAIQ?key=Tkp5Z0pVd2pBOGI0bHRFclZuOHJtVHY2d0ZMN1NB">がぞうせつめい</a>-----------
+<form name="tzone">
+<b>ググるチャートのタイムゾーン</b><br>
+<label for="OF"><input type="checkbox" checked="checked" value="NEW" id="OF" onchange="drawChart()">OSのタイムゾーンを優先する(DST修正あり),<a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Intl">OSタイムゾーン情報;</a><span id="intl"></span></label></label><br>
+※OSのチェックを外し↓のりすとを使用した場合,任意の固定時間でのぐぐるちゃーとの時間になります,DST修正はなくなります
+<select name="owata" onchange="drawChart()">
+<option value="">UTC -12:00　国際日付変更線西側</option>
+<option value="">UTC -11:00　ミッドウェー島</option>
+<option value="">UTC -10:00　ハワイ</option>
+<option value="">UTC -09:00　アラスカ</option>
+<option value="">UTC -08:00　(米国およびカナダ　; ティファナティファナ</option>
+<option value="">UTC -07:00　山岳部標準時:(米国およびカナダ　</option>
+<option value="">UTC -07:00　チワワ、ラパス、マサトラン</option>
+<option value="">UTC -07:00　アリゾナ州</option>
+<option value="">UTC -06:00　中部標準:(米国およびカナダ　</option>
+<option value="">UTC -06:00　サスカチェワン</option>
+<option value="">UTC -06:00　グアダラハラ、メキシコシティ、モンテレー</option>
+<option value="">UTC -06:00　中央アメリカ</option>
+<option value="">UTC -05:00　(米国およびカナダ）、東部標準時</option>
+<option value="">UTC -05:00　インディアナ (東部　</option>
+<option value="">UTC -05:00　ボゴタ、リマ、Quito</option>
+<option value="">UTC -04:00　大西洋標準:(カナダ　</option>
+<option value="">UTC -04:00　ジョージタウン、ラパス、サンフアン</option>
+<option value="">UTC -04:00　サンティアゴ</option>
+<option value="">UTC -03:30　ニューファンドランド</option>
+<option value="">UTC -03:00　ブラジリア</option>
+<option value="">UTC -03:00　ジョージタウン</option>
+<option value="">UTC -03:00　グリーンランド</option>
+<option value="">UTC -02:00　中央大西洋</option>
+<option value="">UTC -01:00　アゾレス諸島</option>
+<option value="">UTC -01:00　カーボベルデ諸島</option>
+<option value="">UTC +00:00　ダブリン、エジンバラ、リスボン、ロンドン、グリニッジ標準時、世界協定時刻</option>
+<option value="">UTC +00:00　モンロビア、レイキャビク</option>
+<option value="">UTC +01:00　サニーベイル, カリフォルニア州、ブラチスラバ、ブダペスト、Ljubljana、プラハ</option>
+<option value="">UTC +01:00　サラエボ、Skopje、ワルシャワ、Zagreb</option>
+<option value="">UTC +01:00　ブリュッセル、コペンハーゲン、マドリッド、パリ</option>
+<option value="">UTC +01:00　アムステルダム、ベルリン、ベルン、ローマ、ストックホルム、ウィーン</option>
+<option value="">UTC +01:00　西中央アフリカ</option>
+<option value="">UTC +02:00　ミンスク</option>
+<option value="">UTC +02:00　カイロ</option>
+<option value="">UTC +02:00　ヘルシンキ、キエフ、リガ、ソフィア、Tallinn、Vilnius</option>
+<option value="">UTC +02:00　アテネ、ブカレスト、イスタンブール</option>
+<option value="">UTC +02:00　エルサレム</option>
+<option value="">UTC +02:00　ハラレ、プレトリア</option>
+<option value="">UTC +03:00　モスクワ、サンクト ペテルスブルグ、ボルゴグラード</option>
+<option value="">UTC +03:00　クウェート、リヤド</option>
+<option value="">UTC +03:00　ナイロビ</option>
+<option value="">UTC +03:00　バグダッド</option>
+<option value="">UTC +03:30　テヘラン</option>
+<option value="">UTC +04:00　アブダビ、マスカット</option>
+<option value="">UTC +04:00　バクー、トビリシ、エレバン</option>
+<option value="">UTC +04:30　カブール</option>
+<option value="">UTC +05:00　エカテリンブルク</option>
+<option value="">UTC +05:00　タシケント</option>
+<option value="">UTC +05:30　チェンナイ、カルカッタ、ムンバイ、ニューデリー</option>
+<option value="">UTC +05:45　カトマンズ</option>
+<option value="">UTC +06:00　アスタナ、ダッカ</option>
+<option value="">UTC +06:00　スリジャヤワルダナプラコッテ</option>
+<option value="">UTC +06:00　アルマアトイ、ノボシビルスク</option>
+<option value="">UTC +06:30　ヤンゴン (ラングーン　</option>
+<option value="">UTC +07:00　バンコク、ハノイ、ジャカルタ</option>
+<option value="">UTC +07:00　クラスノヤルスク</option>
+<option value="">UTC +08:00　北京、重慶、ホンコン、ウルムチ</option>
+<option value="">UTC +08:00　マレーシア. クアラルンプール、シンガポール</option>
+<option value="">UTC +08:00　台北</option>
+<option value="">UTC +08:00　パース</option>
+<option value="">UTC +08:00　イルクーツク、ウランバートル</option>
+<option value="">UTC +09:00　ソウル</option>
+<option selected="selected" value="">UTC +09:00　大阪、札幌、東京</option>
+<option value="">UTC +09:00　ヤクーツク</option>
+<option value="">UTC +09:30　ダーウィン</option>
+<option value="">UTC +09:30　アデレード</option>
+<option value="">UTC +10:00　キャンベラ、メルボルン、シドニー</option>
+<option value="">UTC +10:00　ブリスベン</option>
+<option value="">UTC +10:00　ホバート</option>
+<option value="">UTC +10:00　ウラジオ ストック</option>
+<option value="">UTC +10:00　グアム、ポートモレスビー</option>
+<option value="">UTC +11:00　大阪、札幌、東京(仮:サマータイム)</option>
+<option value="">UTC +11:00　マガダン、ソロモン諸島、ニューカレドニア</option>
+<option value="">UTC +12:00　フィジー、カムチャツカ、マーシャル諸島</option>
+<option value="">UTC +12:00　オークランド、ウェリントン</option>
+<option value="">UTC +13:00　キリバス、サモア、トケラウ、トンガ、ニュージーランド夏、フィジー夏</option>
+<option value="">UTC +14:00　サモア夏</option>
+</select>
+</form>
+
+<form name="TZPT">
+<b>日次計算用 内部時計参照パターン</b><br>
+<select name="PT" onchange="drawChart()">
+<option value="">UTC協定時間で検索(UTC+00:00)</option>
+<option value="">JST日本時間で検索(UTC+09:00)</option>
+<option selected="selected" value="">OSの現地時間標準時差,LOCALで検索(UTC+??:??)</option>
+<option value="">OSの現地時間DSTサマータイム,LOCALDSTで検索(UTC+??:??)</option>
+<option value="">ぐぐるチャートのじかんで検索(UTC+??:??)</option>
+</select>
+<br>
+<div id="debug">確認用デバッグ時間:----</div>
+※GCHARTにnullがある場合、OS設定の現地時間(DST修正あり)になります(表の一番上とJST時差はmomentのadd('hour',({null-時差}なのでUTC検索モードに)<br>
+※夏時間の場合日次参照は+1hになります(),オーストラリアのロードハウ島は0.5時間<br>
+</form>
+</body></html>
