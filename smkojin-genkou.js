@@ -132,11 +132,20 @@
       var js = JSON.stringify(mkjs(dd));
       var BD = {};
       BD.BD_JSON = js;
-      alert("JSON確認:\r\n" + js);
+      
+      //alert("JSON確認:\r\n" + js);
       //ブックマーレットでぐぐるに送るためにはCORSの回避のため CORSUnblockの拡張かクロームの起動オプションで（）
       //あとログイン情報ないので　フォームのデプロイの下の権限をだれでも似する必要がある(個人自分だけにするにはログイン情報もつけないとX)
-      //var google="https://script.google.com/macros/s/AKfycbytNWTMxHjwVvpC_DQFXEM_xJKjYlkDgiC0C-_biVXRBpusTyIAeUYt/exec";//googleフォームのid
-      //request = $.ajax({url: google,type: "post",	data: BD});
+      
+      //var google="https://script.google.com/macros/s/(設定したgoogleフォームのid)/exec";   //googleフォームのid
+           
+		  	//request =  $.ajax({
+		  	//  url:google,  type: "post",  data: BD,  cache: false,  dataType: 'json'  
+		  	//})
+		  	//.then(function (jqXHR, textStatus, errorThrown) {
+		  	//alert("XMLHttpRequest : " + jqXHR.status + "\r\nJSON確認:\r\n" + js);//200de成功
+		  	//});
+
       return false;
     }
   }
