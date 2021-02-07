@@ -42,7 +42,8 @@
   var year = '2014';
   var all = false;
   var dd = "";
-  var rank = [1, 2, 10, 50, 100, 200, 300, 500, 1000];
+  //var rank=[1,2,3,15,50,100,200,300,500,800];//まらそん
+  var rank=[1,2,10,50,100,200,300,500,1000];//ビンゴ、来パレ
   var dlen = rank.length - 1;
   var ptn = "";
   var eventname = "hotel_utmost"; //イベのURL
@@ -207,7 +208,7 @@
         tmp = tmp.replace(/\t+/gm, "\t");
         if (ptn == "") {
           //alert(tmp);
-          ptn = tmp.match(/.*?ﾎﾟｲﾝﾄ :  /);
+          ptn = tmp.match(/.*(興行成績|ﾎﾟｲﾝﾄ) :  /);
           ptn = ptn[0].replace(/1位	.*?	/, "");
         }
         tmp = tmp.replace(/位\t.*?:/gm, "位\t");
